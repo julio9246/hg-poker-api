@@ -1,0 +1,2 @@
+APPLICATION_NAME = 'hgpoker-core-api'
+APPLICATION_VERSION = '1.0.0'

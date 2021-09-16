@@ -1,0 +1,6 @@
+NUMBER_NF = 'Número Nota'
+LOG = 'Log'
+CONCLUIDA = 'Concluída'
+NAO_INICIADA = 'Não Iniciada'
+EM_ANDAMENTO = 'Em Andamento'
+ATRASADA = 'Atrasada'
