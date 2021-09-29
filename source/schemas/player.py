@@ -15,7 +15,7 @@ class PlayerSchema(Validation):
             'nick_name': {
                 'empty': False,
                 'nullable': False,
-                'required': True,
+                'required': False,
                 'type': 'string'
             },
             'phone_number': {
@@ -39,13 +39,13 @@ class PlayerSchema(Validation):
             'description': {
                 'empty': False,
                 'nullable': False,
-                'required': True,
+                'required': False,
                 'type': 'string'
             },
             'photo': {
                 'empty': False,
                 'nullable': False,
-                'required': True,
+                'required': False,
                 'type': 'string'
             },
             'active': {

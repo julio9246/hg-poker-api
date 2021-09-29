@@ -14,13 +14,28 @@ class PlayerBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def login(self, data):
+        result = self.player_repository.login(data)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def find_by_id(self, player_id):
         result = self.player_repository.find_by_id(player_id)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def find_by_email(self, email):
+        result = self.player_repository.find_by_email(email)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def save(self, data):
+
+        if self.player_repository.find_by_email(data.get('email')):
+            return {'error': message.REGISTER_ALREADY_EXIST}
         active = data.get('active') if data.get('active') else True
         return self.player_repository.save(
             data.get('name'),

@@ -26,7 +26,7 @@ class PlayerRepository:
                 .fetch_all()
             )
 
-    def find_by_id(self, id):
+    def login(self, data):
         with connect() as connection:
             return (
                 connection
@@ -39,9 +39,41 @@ class PlayerRepository:
                         'pass',
                         'description',
                         'photo')
-                .where('id', id, operator='=')
+                .where('email', data['email'], operator='=')
+                .where('pass', data['pass'], operator='=')
                 .where('active', True, operator='is')
                 .order_by('id')
+                .execute()
+                .fetch_one()
+            )
+
+    def find_by_id(self, id):
+        with connect() as connection:
+            return (
+                connection
+                    .select(self.TABLE)
+                    .fields('id',
+                            'name',
+                            'nick_name',
+                            'phone_number',
+                            'email',
+                            'pass',
+                            'description',
+                            'photo')
+                    .where('id', id, operator='=')
+                    .where('active', True, operator='is')
+                    .order_by('id')
+                    .execute()
+                    .fetch_one()
+            )
+
+    def find_by_email(self, email):
+        with connect() as connection:
+            return (
+                connection
+                .select(self.TABLE)
+                .fields('id')
+                .where('email', email, operator='=')
                 .execute()
                 .fetch_one()
             )
@@ -54,7 +86,7 @@ class PlayerRepository:
                 'nick_name': nick_name,
                 'phone_number': phone_number,
                 'email': email,
-                'password': password,
+                'pass': password,
                 'description': description,
                 'photo': photo,
                 'active': active
