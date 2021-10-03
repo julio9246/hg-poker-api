@@ -41,6 +41,12 @@ def find_by_email(email):
     return jsonify(Response(200).success(response)), 200
 
 
+@player_api.route('/find-by-nick_name/<string:nick_name>', methods=['GET'], strict_slashes=False)
+def find_by_nick_name(nick_name):
+    response = player_business.find_by_nick_name(nick_name)
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_api.route('/<int:player_id>', methods=['PUT'], strict_slashes=False)
 def update(player_id):
     current_app.logger.info('Update Player.')

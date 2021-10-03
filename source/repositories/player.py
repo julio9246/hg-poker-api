@@ -27,25 +27,38 @@ class PlayerRepository:
             )
 
     def login(self, data):
-        with connect() as connection:
-            return (
-                connection
-                .select(self.TABLE)
-                .fields('id',
-                        'name',
-                        'nick_name',
-                        'phone_number',
-                        'email',
-                        'pass',
-                        'description',
-                        'photo')
-                .where('email', data['email'], operator='=')
-                .where('pass', data['pass'], operator='=')
-                .where('active', True, operator='is')
-                .order_by('id')
-                .execute()
-                .fetch_one()
-            )
+
+        comando = f""" select *
+                       from player                           
+                       {f" WHERE email = '{data.get('email')}'" if data.get('email') else ''} 
+                       {f" AND pass = '{data.get('pass')}'" if data.get('pass') else ''}
+                    """
+        result = connect().execute(comando, skip_load_query=True).fetch_one()
+
+        if result:
+            return result
+
+        comando = f""" select *
+                       from player                           
+                       {f" WHERE nick_name = '{data.get('email')}'" if data.get('email') else ''} 
+                       {f" AND pass = '{data.get('pass')}'" if data.get('pass') else ''}
+                    """
+        result = connect().execute(comando, skip_load_query=True).fetch_one()
+
+        if result:
+            return result
+
+        comando = f""" select *
+                       from player                           
+                       {f" WHERE phone_number = '{data.get('email')}'" if data.get('email') else ''} 
+                       {f" AND pass = '{data.get('pass')}'" if data.get('pass') else ''}
+                    """
+        result = connect().execute(comando, skip_load_query=True).fetch_one()
+
+        if result:
+            return result
+
+        return None
 
     def find_by_id(self, id):
         with connect() as connection:
@@ -72,8 +85,33 @@ class PlayerRepository:
             return (
                 connection
                 .select(self.TABLE)
-                .fields('id')
+                .fields('id',
+                        'name',
+                        'nick_name',
+                        'phone_number',
+                        'email',
+                        'pass',
+                        'description',
+                        'photo')
                 .where('email', email, operator='=')
+                .execute()
+                .fetch_one()
+            )
+
+    def find_by_nick_name(self, nick_name):
+        with connect() as connection:
+            return (
+                connection
+                .select(self.TABLE)
+                .fields('id',
+                        'name',
+                        'nick_name',
+                        'phone_number',
+                        'email',
+                        'pass',
+                        'description',
+                        'photo')
+                .where('nick_name', nick_name, operator='=')
                 .execute()
                 .fetch_one()
             )

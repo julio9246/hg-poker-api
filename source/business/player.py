@@ -32,6 +32,12 @@ class PlayerBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def find_by_nick_name(self, nick_name):
+        result = self.player_repository.find_by_nick_name(nick_name)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def save(self, data):
 
         if self.player_repository.find_by_email(data.get('email')):

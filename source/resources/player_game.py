@@ -18,6 +18,14 @@ def find_all():
     return jsonify(Response(200).success(response)), 200
 
 
+@player_game_api.route('/ranking/<int:game_id>', methods=['GET'], strict_slashes=False)
+def get_ranking(game_id):
+    current_app.logger.info('Get Player Game By GameId.')
+    response = player_game_business.get_ranking(game_id)
+    current_app.logger.info('Get Players Game By GameId completed successfully.')
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_game_api.route('/<int:field_id>', methods=['GET'], strict_slashes=False)
 def find_by_id(field_id):
     current_app.logger.info('Get By Id.')
