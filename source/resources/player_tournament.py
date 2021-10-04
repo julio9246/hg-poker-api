@@ -26,6 +26,14 @@ def find_by_id(field_id):
     return jsonify(Response(200).success(response)), 200
 
 
+@player_tournament_api.route('/ranking/<int:tournament_id>', methods=['GET'], strict_slashes=False)
+def get_ranking(tournament_id):
+    current_app.logger.info('Get Player Game By GameId.')
+    response = player_tournament_business.get_ranking(tournament_id)
+    current_app.logger.info('Get Players Game By GameId completed successfully.')
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_tournament_api.route('/<int:field_id>', methods=['PUT'], strict_slashes=False)
 def update(field_id):
     current_app.logger.info('Update.')

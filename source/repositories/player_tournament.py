@@ -20,6 +20,21 @@ class PlayerTournamentRepository:
                 .fetch_all()
             )
 
+    def get_ranking(self, tournament_id):
+
+        comando = f""" select a.photo,
+                              a.name,
+                              b.position,
+                              sum(b.qtd_pontos) as qtd_pontos
+                       from player a
+                       inner join player_game b on b.player_id = a.id
+                       inner join game c on c.id = b.game_id              
+                       WHERE c.tournament_id = {tournament_id}  
+                       GROUP BY 1,2,3
+                       ORDER BY 3 
+                    """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     def find_by_id(self, id):
         with connect() as connection:
             return (

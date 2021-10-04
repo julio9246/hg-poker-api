@@ -22,18 +22,6 @@ class PlayerGameRepository:
                 .fetch_all()
             )
 
-    def get_ranking(self, gamer_id):
-
-        comando = f""" select a.photo,
-                              a.name,
-                              b.position,
-                              b.qtd_pontos
-                       from player a
-                       inner join player_game b on b.player_id = a.id              
-                       WHERE b.game_id = {gamer_id}  
-                    """
-        return connect().execute(comando, skip_load_query=True).fetch_all()
-
     def find_by_id(self, id):
         with connect() as connection:
             return (
