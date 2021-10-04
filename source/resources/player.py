@@ -27,6 +27,12 @@ def login():
     return jsonify(Response(200).success(response)), 200
 
 
+@player_api.route('/logout/<string:email>', methods=['PUT'], strict_slashes=False)
+def logout(email):
+    response = player_business.logout(email)
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_api.route('/<int:player_id>', methods=['GET'], strict_slashes=False)
 def find_by_id(player_id):
     current_app.logger.info('Get Player By Id.')

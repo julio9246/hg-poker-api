@@ -53,6 +53,12 @@ class PlayerSchema(Validation):
                 'nullable': False,
                 'required': False,
                 'type': 'boolean'
+            },
+            'logado': {
+                'empty': False,
+                'nullable': False,
+                'required': False,
+                'type': 'boolean'
             }
         }
 
@@ -96,6 +102,12 @@ class PlayerSchema(Validation):
                 'type': 'string'
             },
             'active': {
+                'empty': False,
+                'nullable': False,
+                'required': False,
+                'type': 'boolean'
+            },
+            'logado': {
                 'empty': False,
                 'nullable': False,
                 'required': False,

@@ -60,6 +60,14 @@ class PlayerRepository:
 
         return None
 
+    def logout(self, email):
+
+        comando = f""" select *
+                       from player                           
+                       WHERE email = '{email}'
+                    """
+        return connect().execute(comando, skip_load_query=True).fetch_one()
+
     def find_by_id(self, id):
         with connect() as connection:
             return (
@@ -72,7 +80,8 @@ class PlayerRepository:
                             'email',
                             'pass',
                             'description',
-                            'photo')
+                            'photo',
+                            'logado')
                     .where('id', id, operator='=')
                     .where('active', True, operator='is')
                     .order_by('id')
@@ -92,7 +101,8 @@ class PlayerRepository:
                         'email',
                         'pass',
                         'description',
-                        'photo')
+                        'photo',
+                        'logado')
                 .where('email', email, operator='=')
                 .execute()
                 .fetch_one()
@@ -110,14 +120,15 @@ class PlayerRepository:
                         'email',
                         'pass',
                         'description',
-                        'photo')
+                        'photo',
+                        'logado')
                 .where('nick_name', nick_name, operator='=')
                 .execute()
                 .fetch_one()
             )
 
     @staticmethod
-    def save(name, nick_name, phone_number, email, password, description, photo, active):
+    def save(name, nick_name, phone_number, email, password, description, photo, active, logado):
         with connect() as connection:
             parameters = {
                 'name': name,
@@ -127,13 +138,14 @@ class PlayerRepository:
                 'pass': password,
                 'description': description,
                 'photo': photo,
-                'active': active
+                'active': active,
+                'logado': logado
             }
             return (
                 connection
                 .execute('''
                     insert into player (
-                        name, nick_name, phone_number, email, pass, description, photo, active
+                        name, nick_name, phone_number, email, pass, description, photo, active, logado
                     ) values (
                         %(name)s,
                         %(nick_name)s,
@@ -142,7 +154,8 @@ class PlayerRepository:
                         %(pass)s,
                         %(description)s,
                         %(photo)s,
-                        %(active)s
+                        %(active)s,
+                        %(logado)s
                     )
                     returning
                         *

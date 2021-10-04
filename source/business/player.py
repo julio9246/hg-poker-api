@@ -18,6 +18,24 @@ class PlayerBusiness:
         result = self.player_repository.login(data)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+
+        payload = {
+            'logado': True
+        }
+        self.update(result.id, payload)
+
+        return result
+
+    def logout(self, email):
+        result = self.player_repository.logout(email)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+
+        payload = {
+            'logado': False
+        }
+        self.update(result.id, payload)
+
         return result
 
     def find_by_id(self, player_id):
@@ -51,7 +69,8 @@ class PlayerBusiness:
             data.get('pass'),
             data.get('description'),
             data.get('photo'),
-            active
+            active,
+            True,
         )
 
     def update(self, field_id, data):
