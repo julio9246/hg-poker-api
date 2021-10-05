@@ -20,6 +20,12 @@ class PlayerTournamentBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def get_player_tournament(self, data):
+        result = self.player_tournament_repository.get_player_tournament(data)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def find_by_id(self, field_id):
         result = self.player_tournament_repository.find_by_id(field_id)
         if not result:
@@ -30,6 +36,8 @@ class PlayerTournamentBusiness:
         return self.player_tournament_repository.save(
             data.get('player_id'),
             data.get('tournament_id'),
+            data.get('position'),
+            data.get('points_acum'),
             data.get('adm')
         )
 

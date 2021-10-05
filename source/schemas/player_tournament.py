@@ -18,6 +18,12 @@ class PlayerTournamentSchema(Validation):
                 'required': True,
                 'type': 'integer'
             },
+            'position': {
+                'min': 0,
+                'nullable': False,
+                'required': True,
+                'type': 'integer'
+            },
             'adm': {
                 'empty': False,
                 'nullable': False,
@@ -36,6 +42,18 @@ class PlayerTournamentSchema(Validation):
                 'type': 'integer'
             },
             'tournament_id': {
+                'min': 0,
+                'nullable': False,
+                'required': False,
+                'type': 'integer'
+            },
+            'position': {
+                'min': 0,
+                'nullable': False,
+                'required': False,
+                'type': 'integer'
+            },
+            'points_acum': {
                 'min': 0,
                 'nullable': False,
                 'required': False,
