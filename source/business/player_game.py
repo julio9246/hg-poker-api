@@ -20,6 +20,12 @@ class PlayerGameBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def get_player_game_report(self, data):
+        result = self.player_game_repository.get_player_game_report(data['player_id'])
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def save(self, data):
         return self.player_game_repository.save(
             data.get('player_id'),

@@ -14,6 +14,12 @@ class TournamentBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def get_list_all_tournament(self):
+        result = self.tournament_repository.get_list_all_tournament()
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def find_by_id(self, field_id):
         result = self.tournament_repository.find_by_id(field_id)
         if not result:

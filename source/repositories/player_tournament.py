@@ -24,19 +24,21 @@ class PlayerTournamentRepository:
 
     def get_ranking(self, tournament_id):
 
-        comando = f""" select a.id as player_id,
+        comando = f""" select distinct 
+                              a.id as player_id,
                               a.photo,
                               a.name,
-                              b.position,
+                              a.description,
+                              e.position,
                               d.name as tournament_name,
-                              sum(b.qtd_pontos) as qtd_pontos
+                              e.points_acum as qtd_pontos
                        from player a
                        inner join player_game b on b.player_id = a.id
                        inner join game c on c.id = b.game_id     
-                       inner join tournament d on d.id = c.tournament_id         
-                       WHERE c.tournament_id = {tournament_id}  
-                       GROUP BY 1,2,3,4,5
-                       ORDER BY 4 
+                       inner join tournament d on d.id = c.tournament_id   
+                       inner join player_tournament e on e.tournament_id = d.id and e.player_id = a.id     
+                       WHERE c.tournament_id = {tournament_id}   
+                       ORDER BY 5
                     """
         return connect().execute(comando, skip_load_query=True).fetch_all()
 

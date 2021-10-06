@@ -28,6 +28,19 @@ class TournamentRepository:
                 .fetch_all()
             )
 
+    def get_list_all_tournament(self):
+        comando = f""" select t.id,
+                              t.name,
+                              to_char(t.date_start, 'DD/MM/YYYY') as initial_date,
+                              to_char(t.date_end, 'DD/MM/YYYY') as final_date,
+                              case
+                              when t.date_end > 'today'
+                              then 'ABERTO'
+                              else 'FECHADO' end as status
+                from tournament t   
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     def find_by_id(self, id):
         with connect() as connection:
             return (

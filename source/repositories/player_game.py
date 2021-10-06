@@ -39,6 +39,20 @@ class PlayerGameRepository:
                 .fetch_one()
             )
 
+    def get_player_game_report(self, player_id):
+        comando = f""" select to_char(pg.date, 'DD/MM/YYYY') as date,
+                       g.game_number,
+                       pg.qtd_pontos ,
+                       pg.qtd_fichas,
+                       pg."position"
+                from player_game pg 
+                inner join game g on g.id = pg.game_id
+                where pg.player_id = {player_id}
+                order by 1
+
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     @staticmethod
     def save(player_id, game_id, qtd_fichas, qtd_pontos, position):
         with connect() as connection:

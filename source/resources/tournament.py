@@ -18,6 +18,12 @@ def find_all():
     return jsonify(Response(200).success(response)), 200
 
 
+@tournament_api.route('/all', methods=['GET'], strict_slashes=False)
+def get_list_all_tournament():
+    response = tournament_business.get_list_all_tournament()
+    return jsonify(Response(200).success(response)), 200
+
+
 @tournament_api.route('/<int:field_id>', methods=['GET'], strict_slashes=False)
 def find_by_id(field_id):
     current_app.logger.info('Get By Id.')

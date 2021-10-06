@@ -26,6 +26,13 @@ def find_by_id(field_id):
     return jsonify(Response(200).success(response)), 200
 
 
+@player_game_api.route('/report', methods=['POST'], strict_slashes=False)
+def get_player_game_report():
+    data = request.get_json()
+    response = player_game_business.get_player_game_report(data)
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_game_api.route('/<int:field_id>', methods=['PUT'], strict_slashes=False)
 def update(field_id):
     current_app.logger.info('Update.')
