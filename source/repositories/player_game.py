@@ -39,6 +39,31 @@ class PlayerGameRepository:
                 .fetch_one()
             )
 
+    def game_report(self, tournament_id):
+        comando = f"""select  g.game_number ,
+                            to_char(g.date_start, 'DD/MM/YYYY') as date 
+                    from game g 
+                    where g.tournament_id = {tournament_id}
+                    order by 1
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
+    def game_report_by_tournament_id(self, tournament_id):
+        comando = f""" select  g.game_number ,
+                                to_char(g.date_start, 'DD/MM/YYYY') as date,
+                                p."name" as player_name,
+                                p.photo as player_photo,
+                                pg.qtd_pontos as player_qtd_pontos,
+                                pg."position" as player_position
+                    from game g
+                    inner join player_game pg on pg.game_id = g.id
+                    inner join player p on p.id = pg.player_id 
+                    where g.tournament_id = {tournament_id}
+                    order by 2,1,6
+
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     def get_player_game_report(self, player_id):
         comando = f""" select to_char(pg.date, 'DD/MM/YYYY') as date,
                        g.game_number,
