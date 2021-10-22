@@ -59,13 +59,13 @@ class PlayerGameRepository:
                     inner join player_game pg on pg.game_id = g.id
                     inner join player p on p.id = pg.player_id 
                     where g.tournament_id = {tournament_id}
-                    order by 2,1,6
+                    order by 1,2,6
 
                 """
         return connect().execute(comando, skip_load_query=True).fetch_all()
 
     def get_player_game_report(self, player_id):
-        comando = f""" select to_char(pg.date, 'DD/MM/YYYY') as date,
+        comando = f""" select to_char(g.date_start, 'DD/MM/YYYY') as date,
                        g.game_number,
                        pg.qtd_pontos ,
                        pg.qtd_fichas,

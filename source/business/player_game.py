@@ -1,6 +1,7 @@
 from source.exceptions.not_found import NotFoundException
 from source.repositories.player_game import PlayerGameRepository
 import source.commons.message as message
+from source.utils.utils import remove_duplicated_data_from_array
 
 
 class PlayerGameBusiness:
@@ -36,7 +37,32 @@ class PlayerGameBusiness:
         result = self.player_game_repository.game_report_by_tournament_id(tournament_id)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
-        return result
+
+        dic = []
+        for r in result:
+            dic.append({
+                'game_number': r.get('game_number'),
+                'date': r.get('date'),
+                'game_data': []
+            })
+        dic = list(remove_duplicated_data_from_array(dic))
+
+        key = 0
+        for r in result:
+            for d in dic:
+                if r.get('game_number') == d.get('game_number') and r.get('date') == d.get('date'):
+                    key += 1
+                    d.get('game_data').append(
+                        {
+                            'id': key,
+                            'player_name': r.get('player_name'),
+                            'player_photo': r.get('player_photo'),
+                            'player_qtd_pontos': r.get('player_qtd_pontos'),
+                            'player_position': r.get('player_position')
+                        }
+                    )
+
+        return dic
 
     def save(self, data):
         return self.player_game_repository.save(

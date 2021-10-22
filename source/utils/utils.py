@@ -14,11 +14,13 @@ import requests
 
 OUTPUT_PATH = '/tmp'
 
+
 def build_result(data, command, order_by):
     records = 0
     per_page = 20
     if data.get('page'):
-        result = connect().execute(command, skip_load_query=True).fetch_all() # database.engine.execute(text(command)).fetchall()
+        result = connect().execute(command,
+                                   skip_load_query=True).fetch_all()  # database.engine.execute(text(command)).fetchall()
         records = len(result)
 
         command = command + order_by
@@ -37,13 +39,23 @@ def build_result(data, command, order_by):
         else:
             return [], 0, 0
 
-        result = connect().execute(command, skip_load_query=True).fetch_all() #database.engine.execute(text(command)).fetchall()
+        result = connect().execute(command,
+                                   skip_load_query=True).fetch_all()  # database.engine.execute(text(command)).fetchall()
         return result, records, math.ceil(records / per_page)
 
     command = command + order_by
 
-    result = connect().execute(command, skip_load_query=True).fetch_all() #database.engine.execute(text(command)).fetchall()
+    result = connect().execute(command,
+                               skip_load_query=True).fetch_all()  # database.engine.execute(text(command)).fetchall()
     return result, records, math.ceil(records / per_page)
+
+
+def remove_duplicated_data_from_array(it):
+    seen = []
+    for x in it:
+        if x not in seen:
+            yield x
+            seen.append(x)
 
 
 def get_param_by_name(name):
@@ -53,5 +65,6 @@ def get_param_by_name(name):
                 where   c.name = '{name}'
                 """
 
-    result = connect().execute(command, skip_load_query=True).fetch_all() #database.engine.execute(text(command)).fetchall()
+    result = connect().execute(command,
+                               skip_load_query=True).fetch_all()  # database.engine.execute(text(command)).fetchall()
     return result
