@@ -1,6 +1,7 @@
 from source.exceptions.not_found import NotFoundException
 from source.repositories.game import GameRepository
 import source.commons.message as message
+from source.schemas import tournament
 
 
 class GameBusiness:
@@ -16,6 +17,12 @@ class GameBusiness:
 
     def find_by_id(self, field_id):
         result = self.game_repository.find_by_id(field_id)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
+    def find_game_by_tournament(self, tournament_id):
+        result = self.game_repository.find_game_by_tournament(tournament_id)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
