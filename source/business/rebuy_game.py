@@ -14,6 +14,12 @@ class RebuyGameBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def get_report_by_game(self, game_id):
+        result = self.rebuy_game_repository.get_report_by_game(game_id)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def find_by_id(self, field_id):
         result = self.rebuy_game_repository.find_by_id(field_id)
         if not result:

@@ -20,6 +20,21 @@ class RebuyGameRepository:
                 .fetch_all()
             )
 
+    def get_report_by_game(self, game_id):
+        comando = f""" select  p.id as player_id,
+                            p.name as player_name,
+                            p.photo as player_photo,
+                            count(rg.player_id) as qtd_rebuy,
+                            sum(rg.value) as value
+
+                    from rebuy_game rg
+                    inner join player p on p.id = rg.player_id
+                    where rg.game_id = {game_id}
+                    group by 1,2,3
+                    order by 2
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     def find_by_id(self, id):
         with connect() as connection:
             return (

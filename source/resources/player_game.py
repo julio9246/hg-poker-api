@@ -39,6 +39,13 @@ def game_report(tournament_id):
     return jsonify(Response(200).success(response)), 200
 
 
+@player_game_api.route('/game-report/game/<int:game_id>', methods=['GET'], strict_slashes=False)
+def game_report_by_game_id(game_id):
+    response = player_game_business.game_report_by_game_id(game_id)
+    print(response)
+    return jsonify(Response(200).success(response)), 200
+
+
 @player_game_api.route('/game-report/<int:tournament_id>', methods=['GET'], strict_slashes=False)
 def game_report_by_tournament_id(tournament_id):
     response = player_game_business.game_report_by_tournament_id(tournament_id)

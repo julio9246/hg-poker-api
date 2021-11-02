@@ -33,6 +33,12 @@ class PlayerGameBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
+    def game_report_by_game_id(self, game_id):
+        result = self.player_game_repository.game_report_by_game_id(game_id)
+        if not result:
+            raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+        return result
+
     def game_report_by_tournament_id(self, tournament_id):
         result = self.player_game_repository.game_report_by_tournament_id(tournament_id)
         if not result:

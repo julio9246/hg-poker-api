@@ -64,6 +64,22 @@ class PlayerGameRepository:
                 """
         return connect().execute(comando, skip_load_query=True).fetch_all()
 
+    def game_report_by_game_id(self, game_id):
+        comando = f""" select  distinct g.game_number ,
+                                to_char(g.date_start, 'DD/MM/YYYY') as date,
+                                p."name" as player_name,
+                                p.photo as player_photo,
+                                pg.qtd_pontos as player_qtd_pontos,
+                                pg."position" as player_position
+                    from game g
+                    inner join player_game pg on pg.game_id = g.id
+                    inner join player p on p.id = pg.player_id 
+                    where g.id = {game_id}
+                    order by 1,2,6
+
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
     def get_player_game_report(self, player_id):
         comando = f""" select to_char(g.date_start, 'DD/MM/YYYY') as date,
                        g.game_number,

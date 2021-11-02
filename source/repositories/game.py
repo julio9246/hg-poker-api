@@ -39,15 +39,16 @@ class GameRepository:
             )
 
     def find_game_by_tournament(self, tournament_id):
-        comando = f""" select to_char(g.date_start, 'DD/MM/YYYY') as date,
+        comando = f""" select g.id,
+                       to_char(g.date_start, 'DD/MM/YYYY') as date,
                        g.game_number,
                        g.localization,
                        count(distinct pg.player_id) as qtd_players
                 from game g
                 inner join player_game pg on pg.game_id = g.id  
                 where g.tournament_id = {tournament_id}
-                group by 1,2,3
-                order by 2
+                group by 1,2,3,4
+                order by 3
 
                 """
         return connect().execute(comando, skip_load_query=True).fetch_all()
