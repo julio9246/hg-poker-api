@@ -24,7 +24,7 @@ def get_report_by_game(game_id):
     response = rebuy_game_business.get_report_by_game(game_id)
     current_app.logger.info('Get By game_id completed successfully.')
     print(response)
-    return jsonify(Response(200).success(response)), 2
+    return jsonify(Response(200).success(response)), 200
 
 
 @rebuy_game_api.route('/<int:field_id>', methods=['GET'], strict_slashes=False)

@@ -18,6 +18,14 @@ class RebuyGameBusiness:
         result = self.rebuy_game_repository.get_report_by_game(game_id)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
+
+        total = 0
+        for r in result:
+            total = total + r['value']
+
+        for r in result:
+            r['total'] = total
+
         return result
 
     def find_by_id(self, field_id):
