@@ -18,17 +18,15 @@ def find_all():
     return jsonify(Response(200).success(response)), 200
 
 
-@tournament_api.route('/all', methods=['GET'], strict_slashes=False)
-def get_list_all_tournament():
-    response = tournament_business.get_list_all_tournament()
+@tournament_api.route('/list/<int:player_id>', methods=['GET'], strict_slashes=False)
+def get_list_all_tournament_by_player_id(player_id):
+    response = tournament_business.get_list_all_tournament_by_player_id(player_id)
     return jsonify(Response(200).success(response)), 200
 
 
-@tournament_api.route('/<int:field_id>', methods=['GET'], strict_slashes=False)
-def find_by_id(field_id):
-    current_app.logger.info('Get By Id.')
-    response = tournament_business.find_by_id(field_id)
-    current_app.logger.info('Get By Id completed successfully.')
+@tournament_api.route('/<int:tournament_id>', methods=['GET'], strict_slashes=False)
+def get_all_tournament_by_id(tournament_id):
+    response = tournament_business.get_all_tournament_by_id(tournament_id)
     return jsonify(Response(200).success(response)), 200
 
 

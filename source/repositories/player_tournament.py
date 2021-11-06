@@ -26,12 +26,12 @@ class PlayerTournamentRepository:
 
         comando = f""" select distinct 
                               a.id as player_id,
-                              a.photo,
-                              a.name,
-                              a.description,
-                              e.position,
+                              a.photo as player_photo,
+                              a.name as player_name,
+                              a.description as player_description,
+                              e.position as player_position,
                               d.name as tournament_name,
-                              e.points_acum as qtd_pontos
+                              e.points_acum as player_qtd_pontos
                        from player a
                        inner join player_game b on b.player_id = a.id
                        inner join game c on c.id = b.game_id     

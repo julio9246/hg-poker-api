@@ -28,7 +28,7 @@ class TournamentRepository:
                 .fetch_all()
             )
 
-    def get_list_all_tournament(self):
+    def get_list_all_tournament_by_player_id(self,player_id):
         comando = f""" select t.id,
                               t.name,
                               to_char(t.date_start, 'DD/MM/YYYY') as initial_date,
@@ -38,6 +38,33 @@ class TournamentRepository:
                               then 'ABERTO'
                               else 'FECHADO' end as status
                 from tournament t   
+                inner join player_tournament pt on pt.tournament_id = t.id
+                where pt.player_id = {player_id}
+                """
+        return connect().execute(comando, skip_load_query=True).fetch_all()
+
+    def get_all_tournament_by_id(self, id):
+        comando = f""" select t.id,
+                              t.name,                              
+                              pt.player_id as player_id_adm,
+                              to_char(t.date_start, 'DD/MM/YYYY') as initial_date,
+                              to_char(t.date_end, 'DD/MM/YYYY') as final_date,
+                              case
+                              when t.date_end > 'today'
+                              then 'ABERTO'
+                              else 'FECHADO' end as status,
+                              t.qtd_games ,
+                              t.qtd_players ,
+                              t.value_buyin , 
+                              t.value_total as value_total_initial,
+                              sum(rg.value) as value_rebuy_total,
+                              t.value_total + sum(rg.value) as value_total_final
+                        from tournament t    
+                        inner join player_tournament pt on pt.tournament_id = t.id and pt.adm = true 
+                        inner join game g on g.tournament_id = t.id 
+                        inner join rebuy_game rg on rg.game_id = g.id 
+                        where t.id = {id}
+                        group by 1,2,3,4,5,6,7,8,9,10
                 """
         return connect().execute(comando, skip_load_query=True).fetch_all()
 

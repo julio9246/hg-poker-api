@@ -14,8 +14,8 @@ class PlayerTournamentBusiness:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
 
-    def get_ranking(self, game_id):
-        result = self.player_tournament_repository.get_ranking(game_id)
+    def get_ranking(self, tournament_id):
+        result = self.player_tournament_repository.get_ranking(tournament_id)
         if not result:
             raise NotFoundException(None, message.REGISTER_NOT_FOUND)
         return result
