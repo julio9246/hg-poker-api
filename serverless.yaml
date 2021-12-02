@@ -15,49 +15,27 @@ package:
 plugins:
   - serverless-python-requirements
 
-provider:
-  apiGateway:
-    binaryMediaTypes:
-      - multipart/form-data
-  deploymentBucket:
-    blockPublicAccess: true
-    name: ${self:custom.s3_bucket_deploy}
-    serverSideEncryption: AES256
-  lambdaHashingVersion: 20201221
-  name: aws
-  region: ${opt:region}
-  runtime: python3.8
-  stage: dev
-  tracing:
-    lambda: true
 
 functions:
   lambda:
     environment:
-      APPLICATION_DEBUG: ${ssm:/hgpoker-api-application-debug~true}
-      APPLICATION_HOST: ${ssm:/hgpoker-api-application-host~true}
-      APPLICATION_PORT: ${ssm:/hgpoker-api-application-port~true}
-      DATABASE_HOST: ${ssm:/hgpoker-api-database-host~true}
-      DATABASE_MAX_CONNECTION: ${ssm:/hgpoker-api-database-max-connection~true}
-      DATABASE_NAME: ${ssm:/hgpoker-api-database-name~true}
-      DATABASE_PASSWORD: ${ssm:/hgpoker-api-database-password~true}
-      DATABASE_PORT: ${ssm:/hgpoker-api-database-port~true}
-      DATABASE_PRINT_SQL: ${ssm:/hgpoker-api-database-print-sql~true}
-      DATABASE_USERNAME: ${ssm:/hgpoker-api-database-username~true}
-      FLASK_ENV: ${ssm:/hgpoker-api-flask-env~true}
-      SQLALCHEMY_DATABASE_URI: ${ssm:/hgpoker-api-sqlalchemy-database-uri~true}
+      DATABASE_HOST: hgpoker.c13gml6mujwk.us-east-2.rds.amazonaws.com
+      DATABASE_NAME: hgpoker
+      DATABASE_PASSWORD: pass-hgpoker
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
 
     events:
       - http: ANY /
       - http: ANY /{proxy+}
-    handler: wsgi_handler.handler
+    handler: hgpoker-api.handler
     memorySize: 1024
-    name: hgpoker-api-${opt:stage}
+    name: hgpoker-api-dev
     timeout: 120
 
 resources:
   Resources:
     ApiGatewayRestApi:
       Properties:
-        Name: hgpoker-api-${opt:stage}
+        Name: hgpoker-api-dev
       Type: AWS::ApiGateway::RestApi
