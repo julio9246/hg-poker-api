@@ -1,87 +1,51 @@
-app: cropland-api
-service: cropland-api
+name: configuration for python env
+on: [push, pull_request]
 
-package:
-  exclude:
-    - .github/**
-    - node_modules/**
-    - package.json
-    - package-lock.json
-    - README.md
-    - requirements.txt
-    - venv/**
-  excludeDevDependencies: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-plugins:
-  - serverless-plugin-create-deployment-bucket
-  - serverless-python-requirements
-  - serverless-wsgi
+    services:
+      db_service:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: hgpoker
+          POSTGRES_PASSWORD: pass-hgpoker
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
 
-custom:
-  pythonRequirements:
-    dockerizePip: true
-    slim: true
-    useDownloadCache: false
-  s3_bucket_deploy: cropland-api-${opt:stage}
-  wsgi:
-    app: main.application
-    packRequirements: false
 
-provider:
-  apiGateway:
-    binaryMediaTypes:
-      - multipart/form-data
-  deploymentBucket:
-    blockPublicAccess: true
-    name: ${self:custom.s3_bucket_deploy}
-    serverSideEncryption: AES256
-  lambdaHashingVersion: 20201221
-  name: aws
-  region: ${opt:region}
-  runtime: python3.8
-  stage: ${opt:stage}
-  tracing:
-    lambda: true
 
-functions:
-  lambda:
-    environment:
-      APPLICATION_DEBUG: ${ssm:/cropland-api-application-debug~true}
-      APPLICATION_HOST: ${ssm:/cropland-api-application-host~true}
-      APPLICATION_PORT: ${ssm:/cropland-api-application-port~true}
-      AWS_COGNITO_AUTH_FLOW: ${ssm:/cropland-api-aws-cognito-auth-flow~true}
-      AWS_COGNITO_CLIENT_ID: ${ssm:/cropland-api-aws-cognito-client-id~true}
-      AWS_COGNITO_USER_POOL_ID: ${ssm:/cropland-api-aws-cognito-user-pool-id~true}
-      AWS_S3_BUCKET: ${ssm:/cropland-api-aws-s3-bucket~true}
-      AWS_S3_BUCKET_EXPORT: ${ssm:/cropland-api-aws-s3-bucket-export~true}
-      AWS_SQS_QUEUE: ${ssm:/cropland-api-aws-sqs-queue~true}
-      AWS_SQS_QUEUE_ONBOARDING: ${ssm:/cropland-api-aws-sqs-queue-onboarding~true}
-      DATABASE_HOST: ${ssm:/cropland-api-database-host~true}
-      DATABASE_MAX_CONNECTION: ${ssm:/cropland-api-database-max-connection~true}
-      DATABASE_NAME: ${ssm:/cropland-api-database-name~true}
-      DATABASE_PASSWORD: ${ssm:/cropland-api-database-password~true}
-      DATABASE_PORT: ${ssm:/cropland-api-database-port~true}
-      DATABASE_PRINT_SQL: ${ssm:/cropland-api-database-print-sql~true}
-      DATABASE_USERNAME: ${ssm:/cropland-api-database-username~true}
-      FLASK_ENV: ${ssm:/cropland-api-flask-env~true}
-      PASSWORD_DEFAULT_COGNITO: ${ssm:/cropland-api-password-default-cognito~true}
-      SMTP_EMAIL: ${ssm:/cropland-api-smtp-email~true}
-      SMTP_HOST: ${ssm:/cropland-api-smtp-host~true}
-      SMTP_PASSWORD: ${ssm:/cropland-api-smtp-password~true}
-      SMTP_PORT: ${ssm:/cropland-api-smtp-port~true}
-      SQLALCHEMY_DATABASE_URI: ${ssm:/cropland-api-sqlalchemy-database-uri~true}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install python version
+        uses: gabrielfalcao/pyenv-action@v7
+        with:
+          default: 3.8.6
+          command: pip install -U pip  # upgrade pip after installing python
+      
+      - name: create environment
+        run: pyenv local 3.8.6 && python -mvenv .venv386
 
-    events:
-      - http: ANY /
-      - http: ANY /{proxy+}
-    handler: wsgi_handler.handler
-    memorySize: 1024
-    name: cropland-api-${opt:stage}
-    timeout: 120
+      - name: Install dependencies
+        run: pip install -r requirements.txt --upgrade pip
+             pip install pylint
+      - name: Analysing the code with pylint
+        run: |
+          pylint `ls -R|grep .py$|xargs`
+          
+      - name: setup pyenv
+        id: pyenv_installation
+        uses: "gabrielfalcao/pyenv-action@v7"
 
-resources:
-  Resources:
-    ApiGatewayRestApi:
-      Properties:
-        Name: cropland-api-${opt:stage}
-      Type: AWS::ApiGateway::RestApi
+      - name: debug pyenv
+        run: echo ${{ steps.pyenv_installation.outputs.pyenv_root }}
