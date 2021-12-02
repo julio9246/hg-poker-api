@@ -1,51 +1,63 @@
-name: configuration for python env
-on: [push, pull_request]
+app: hgpoker-api
+service: hgpoker-api
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+package:
+  exclude:
+    - .github/**
+    - node_modules/**
+    - package.json
+    - package-lock.json
+    - README.md
+    - requirements.txt
+    - venv/**
+  excludeDevDependencies: false
 
-    services:
-      db_service:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: hgpoker
-          POSTGRES_PASSWORD: pass-hgpoker
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5432:5432
+plugins:
+  - serverless-python-requirements
 
+provider:
+  apiGateway:
+    binaryMediaTypes:
+      - multipart/form-data
+  deploymentBucket:
+    blockPublicAccess: true
+    name: ${self:custom.s3_bucket_deploy}
+    serverSideEncryption: AES256
+  lambdaHashingVersion: 20201221
+  name: aws
+  region: ${opt:region}
+  runtime: python3.8
+  stage: dev
+  tracing:
+    lambda: true
 
+functions:
+  lambda:
+    environment:
+      APPLICATION_DEBUG: ${ssm:/hgpoker-api-application-debug~true}
+      APPLICATION_HOST: ${ssm:/hgpoker-api-application-host~true}
+      APPLICATION_PORT: ${ssm:/hgpoker-api-application-port~true}
+      DATABASE_HOST: ${ssm:/hgpoker-api-database-host~true}
+      DATABASE_MAX_CONNECTION: ${ssm:/hgpoker-api-database-max-connection~true}
+      DATABASE_NAME: ${ssm:/hgpoker-api-database-name~true}
+      DATABASE_PASSWORD: ${ssm:/hgpoker-api-database-password~true}
+      DATABASE_PORT: ${ssm:/hgpoker-api-database-port~true}
+      DATABASE_PRINT_SQL: ${ssm:/hgpoker-api-database-print-sql~true}
+      DATABASE_USERNAME: ${ssm:/hgpoker-api-database-username~true}
+      FLASK_ENV: ${ssm:/hgpoker-api-flask-env~true}
+      SQLALCHEMY_DATABASE_URI: ${ssm:/hgpoker-api-sqlalchemy-database-uri~true}
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install python version
-        uses: gabrielfalcao/pyenv-action@v7
-        with:
-          default: 3.8.6
-          command: pip install -U pip  # upgrade pip after installing python
-      
-      - name: create environment
-        run: pyenv local 3.8.6 && python -mvenv .venv386
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+    handler: wsgi_handler.handler
+    memorySize: 1024
+    name: hgpoker-api-${opt:stage}
+    timeout: 120
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt --upgrade pip
-             pip install pylint
-      - name: Analysing the code with pylint
-        run: |
-          pylint `ls -R|grep .py$|xargs`
-          
-      - name: setup pyenv
-        id: pyenv_installation
-        uses: "gabrielfalcao/pyenv-action@v7"
-
-      - name: debug pyenv
-        run: echo ${{ steps.pyenv_installation.outputs.pyenv_root }}
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Properties:
+        Name: hgpoker-api-${opt:stage}
+      Type: AWS::ApiGateway::RestApi
