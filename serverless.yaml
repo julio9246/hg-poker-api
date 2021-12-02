@@ -15,6 +15,17 @@ package:
 plugins:
   - serverless-python-requirements
 
+provider:
+  apiGateway:
+    binaryMediaTypes:
+      - multipart/form-data
+  lambdaHashingVersion: 20201221
+  name: aws
+  region: us-east-2
+  runtime: python3.8
+  stage: dev
+  tracing:
+    lambda: true
 
 functions:
   lambda:
