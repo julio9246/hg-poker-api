@@ -42,11 +42,11 @@ provider:
 functions:
   lambda:
     environment:
-      DATABASE_HOST:
-      DATABASE_NAME:
-      DATABASE_PASSWORD:
-      DATABASE_PORT:
-      DATABASE_USERNAME:
+      DATABASE_HOST: ''
+      DATABASE_NAME: ''
+      DATABASE_PASSWORD: ''
+      DATABASE_PORT: ''
+      DATABASE_USERNAME: ''
 
     events:
       - http: ANY /
