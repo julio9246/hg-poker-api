@@ -14,6 +14,19 @@ package:
 
 plugins:
   - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-plugin-create-deployment-bucket
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    slim: true
+    useDownloadCache: false
+  s3_bucket_deploy: hgpoker-api-${opt:stage}
+  wsgi:
+    app: main.application
+    packRequirements: false
+
 
 provider:
   apiGateway:
@@ -23,26 +36,25 @@ provider:
   name: aws
   region: us-east-2
   runtime: python3.8
-  stage: dev
   tracing:
     lambda: true
 
 functions:
   lambda:
     environment:
-      DATABASE_HOST: hgpoker.c13gml6mujwk.us-east-2.rds.amazonaws.com
-      DATABASE_NAME: hgpoker
-      DATABASE_PASSWORD: pass-hgpoker
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: postgres
+      DATABASE_HOST:
+      DATABASE_NAME:
+      DATABASE_PASSWORD:
+      DATABASE_PORT:
+      DATABASE_USERNAME:
 
     events:
       - http: ANY /
       - http: ANY /{proxy+}
-    handler: hgpoker-api.handler
-    memorySize: 1024
-    name: hgpoker-api-dev
-    timeout: 120
+    handler: wsgi_handler.handler
+    memorySize: 128
+    name: hgpoker-api-${opt:stage}
+    timeout: 30
 
 resources:
   Resources:
