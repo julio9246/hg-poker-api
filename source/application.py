@@ -2,6 +2,7 @@ from flask import Flask, Response, jsonify, request, g
 from flask_cors import CORS
 
 from .configuration import configuration
+from .utils.authorization import Authorization
 
 from source.commons import constant
 from source.exceptions.conflict import ConflictException
@@ -47,6 +48,10 @@ def create_application(environment):
     application.register_blueprint(game_api, url_prefix='/api/v1/game')
     application.register_blueprint(player_game_api, url_prefix='/api/v1/player-game')
     application.register_blueprint(rebuy_game_api, url_prefix='/api/v1/rebuy-game')
+
+    @application.before_request
+    def before_request():
+        Authorization().authorize(request.headers.get('Authorization'))
 
     @application.after_request
     def enable_cors(Response):

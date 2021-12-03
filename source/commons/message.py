@@ -39,3 +39,5 @@ REBUY_GAME_NOT_FOUND = 'Rebuy Game não encontrado.'
 GAME_CONFLICT = 'Game já existente.'
 GAME_NO_CONTENT = 'Nenhum Game encontrado.'
 GAME_NOT_FOUND = 'Game não encontrado.'
+
+TOKEN_NOT_FOUND = 'Token não encontrado.'
